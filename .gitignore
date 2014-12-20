@@ -6,4 +6,5 @@ platforms/
 plugins/
 stick2it-ionic.app/
 
-.DS_Store/
+.DS_Store
+.idea/
