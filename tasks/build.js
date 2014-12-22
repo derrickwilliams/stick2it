@@ -4,11 +4,11 @@ var
   _ = require('lodash-node'),
   util = require('util');
 
-module.exports = function stick2itTasks(gulp) {
+module.exports = function stick2itBuild(gulp) {
 
   gulp.task('build', function() {
 
-    _.map(['main', 'goals'], toConcatTask);
+    _.map(['main', 'goals', 'services'], toConcatTask);
 
     function toConcatTask(moduleName) {
       var 
@@ -19,7 +19,7 @@ module.exports = function stick2itTasks(gulp) {
 
       gulp.src([moduleMain, moduleRest, excludeModuleBuild])
         .pipe(concat(moduleName + '.build.js'))
-        .pipe(gulp.dest(moduleDir));
+        .pipe(gulp.dest(moduleDir + '/build'));
     } 
   });
 
