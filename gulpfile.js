@@ -12,7 +12,8 @@ var paths = {
   js: ['./www/js/**/*.js']
 };
 
-require('./task/build')(gulp);
+require('./tasks/build')(gulp);
+require('./tasks/karma')(gulp);
 
 gulp.task('default', ['sass']);
 
