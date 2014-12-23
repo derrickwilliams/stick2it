@@ -5,9 +5,11 @@
       '$scope',
       '$state',
       'stick2itUtils',
+      's2iUserData',
+      'userSettings',
       EditGoalsCategoryController]);
 
-  function EditGoalsCategoryController($scope, $state, s2iUtils) {
+  function EditGoalsCategoryController($scope, $state, s2iUtils, userData, userSettings) {
     $scope.formTitle = getFormTitle($state.$current.data.context);
 
     $scope.category = {
@@ -17,7 +19,12 @@
     $scope.saveCategory = saveCategory;
 
     function saveCategory(category) {
-      db.store('category', category);
+      userData.saveCategory(userSettings.id, category)
+        .then(goToCategoryList);
+    }
+
+    function goToCategoryList() {
+      $state.go('main.goals.categories');
     }
   }
 

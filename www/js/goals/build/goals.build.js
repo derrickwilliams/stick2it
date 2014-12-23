@@ -17,7 +17,7 @@
             parent: 'main',
             views: {
               menuContent: {
-                template: '<div ui-view="page"></div>'
+                template: '<ion-nav-view name="page"></ion-nav-view>'
               }
             }
           })
@@ -49,7 +49,8 @@
             parent: 'main.goals',
             views: {
               page: {
-                templateUrl: 'js/goals/templates/categories/form.html'
+                templateUrl: 'js/goals/templates/categories/form.html',
+                controller: 'EditGoalsCategoryController'
               }
             },
             data: {
@@ -67,24 +68,36 @@
     angular.module('stick2it.goals')
 
       .controller('GoalsCategoriesController',[
-        '$scope', '$http', 'stick2itDb',
+        '$scope', '$http', 's2iUserData', '$state',
 
-        function GoalsCategoriesController($scope, $http, db) {
-          var
-            userSettings;
+        function GoalsCategoriesController($scope, $http, userData, $state) {
+          $scope.categories = [];
 
-          db.loadSettings()
-            .then(function storeSettings(settings) {
-              debugger
-              userSettings = settings;
-              console.log('users settings loaded', settings);
-            })
-            .catch(function handleLoadError(err) {
-              debugger
-              console.log('ERROR', err);
-              throw err;
+          $scope.doHoldAction = function holdAction(a, b, c) {
+            console.log('doHoldAction', a, b, c);
+            debugger
+          };
+
+          userData.settings()
+            .then(getGoals);
+
+          function getGoals(settings) {
+            userData.goals(settings.id)
+              .then(handleGoalData)
+              .catch(handleGoalsError);
+          }
+
+          function handleGoalData(goals) {
+            var list = [];
+            angular.forEach(goals, function pushToList(data, key) {
+              list.push(data);
             });
+            $scope.categories = list;
+          }
 
+          function handleGoalsError(err) {
+            alert('there was an error in categories_controller');
+          }
         }
       ]);
 
@@ -101,9 +114,11 @@
       '$scope',
       '$state',
       'stick2itUtils',
+      's2iUserData',
+      'userSettings',
       EditGoalsCategoryController]);
 
-  function EditGoalsCategoryController($scope, $state, s2iUtils) {
+  function EditGoalsCategoryController($scope, $state, s2iUtils, userData, userSettings) {
     $scope.formTitle = getFormTitle($state.$current.data.context);
 
     $scope.category = {
@@ -113,7 +128,12 @@
     $scope.saveCategory = saveCategory;
 
     function saveCategory(category) {
-      db.store('category', category);
+      userData.saveCategory(userSettings.id, category)
+        .then(goToCategoryList);
+    }
+
+    function goToCategoryList() {
+      $state.go('main.goals.categories');
     }
   }
 

@@ -15,11 +15,11 @@
            template: 'Are you sure you want to clear your settings? This cannot be undone.'
          });
 
-        confirmPopup.then(function handleConfirmationChoice(res) {
-          if (res) {
-            return userData.saveSettings({})
-              .then(goToSetup);
-          }
+        confirmPopup.then(function handleConfirmationChoice(confirmed) {
+          if (!confirmed) return;
+
+          return userData.saveSettings({})
+            .then(goToSetup);
         });
       };
 

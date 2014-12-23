@@ -15,7 +15,7 @@
             parent: 'main',
             views: {
               menuContent: {
-                template: '<div ui-view="page"></div>'
+                template: '<ion-nav-view name="page"></ion-nav-view>'
               }
             }
           })
@@ -47,7 +47,8 @@
             parent: 'main.goals',
             views: {
               page: {
-                templateUrl: 'js/goals/templates/categories/form.html'
+                templateUrl: 'js/goals/templates/categories/form.html',
+                controller: 'EditGoalsCategoryController'
               }
             },
             data: {

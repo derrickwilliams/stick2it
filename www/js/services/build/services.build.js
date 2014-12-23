@@ -73,9 +73,9 @@
   angular.module('stick2it.services')
     .service('s2iUserData', [
 
-      '$window', 'bluebird',
+      '$window', 'bluebird', 'stick2itUtils',
 
-      function s2iUserDataService($window, Promise) {
+      function s2iUserDataService($window, Promise, s2iUtils) {
         var storage = $window.localStorage;
 
         return {
@@ -116,7 +116,8 @@
             .then(saveIt);
 
           function updateCategory(data) {
-            data[categorData.id] = categoryData;
+            verifyUniqueCategoryId(categoryData.id, data);
+            data[categoryData.id] = categoryData;
             return data;
           }
 
@@ -179,14 +180,9 @@
           return id + '-' + suffix;
         }
 
-        function initNewCategory(newCategory, allData) {
-          var newId = s2iUtils.makeGuid();
-
-          verifyUniqueCategoryId(newId, allData);
-
-          newCategory.id = newId;
+        function initNewCategory(newCategory) {
+          newCategory.id = s2iUtils.makeGuid();
           newCategory.goals = {};
-
           return newCategory;
         }
 

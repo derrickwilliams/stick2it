@@ -8,11 +8,14 @@
 
   <ion-content class="has-header">
 
-    <div class="list list-inset">
-      <ion-item class="item" ng-repeat="category in categories">
+    <ion-list>
+      <ion-item class="item"
+        ng-repeat="category in categories track by category.id"
+        ui-sref="main.goals.categories.edit({ categoryId: category.id })",
+        on-hold="doHoldAction()">
         {{category.name}}
       </ion-item>
-    </div>
+    </ion-list>
 
   </ion-content>
 </ion-view>
