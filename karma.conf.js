@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'www/lib/bluebird/js/browser/bluebird.js',
       'www/lib/angular/angular.min.js',
       'www/js/**/build/*.build.js',
       'www/lib/angular-mocks/angular-mocks.js',
@@ -58,8 +59,7 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [
-      // 'Chrome', 
-      'PhantomJS'
+      'Chrome'
     ],
 
 

@@ -1,159 +1,121 @@
+
+/* main/main.js */
 (function(angular) {
 
-  var app = angular
-    .module('stick2it', ['ionic', 'stick2it.goals', 'stick2it.services', 'ngCordova', 'firebase']);
-
-  app.run(['$ionicPlatform', '$rootScope', '$location', function moduleRun($ionicPlatform, $rootScope, $location) {
-      
-      $ionicPlatform.ready(ionicPlatformReady);
-
-      $rootScope.$on('$stateChangeError', stateChangeError);
-      $rootScope.$on('$stateChangeStart', stateChangeStart);
-
-      function ionicPlatformReady() {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if(window.cordova && window.cordova.plugins.Keyboard) {
-          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-        if(window.StatusBar) {
-          // org.apache.cordova.statusbar required
-          StatusBar.styleDefault();
-        }
-      }
-
-      function stateChangeError(ev, toState, toParams, fromState, fromParams, error) {
-        if (error.notSetup) {
-          $location.path('/setup');
-        }
-
-        console.log('$stateChangeError', arguments);
-      }
-
-      function stateChangeStart(event, toState, toParams, fromState, fromParams) {
-        console.log('$stateChangeStart', arguments);
-      }
-
-    }])
-
-
-    .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-      
-      $stateProvider
-        
-        .state('main', {
-          url: '/main',
-          abstract: true,
-          templateUrl: 'js/main/templates/menu.html',
-          controller: 'MainController',
-          resolve: {
-            checkSetup: ['$location', '$q', 'stick2itDb', function checkSetup($location, $q, db) {
-              debugger
-              return db.loadSettings();
-            }]
-          }
-        })
-
-        .state('main.profile', {
-          url: '/profile',
-          views: {
-            'menuContent' :{
-              templateUrl: 'js/main/templates/profile.html',
-              controller: 'ProfileController'
-            }
-          }
-        
-        })
-
-        .state('setup', {
-          url: '/setup',
-          templateUrl: 'js/main/templates/setup.html',
-          controller: 'SetupController'
-        });
-
-      $urlRouterProvider.otherwise('/main/profile');
-
-    }]);
+  angular.module('stick2it', [
+    'ionic',
+    'stick2it.goals',
+    'stick2it.services',
+    'ngCordova',
+    'firebase'
+  ]);
 
 })(angular);
+
+/* main/main_config.js */
 (function(angular) {
 
-  var app = angular
-    .module('stick2it', ['ionic', 'stick2it.goals', 'stick2it.services', 'ngCordova', 'firebase']);
+  angular.module('stick2it')
+    .config([
+      '$stateProvider', '$urlRouterProvider',
 
-  app.run(['$ionicPlatform', '$rootScope', '$location', function moduleRun($ionicPlatform, $rootScope, $location) {
-      
-      $ionicPlatform.ready(ionicPlatformReady);
+      function moduleRun($stateProvider, $urlRouterProvider) {
+        $stateProvider
 
-      $rootScope.$on('$stateChangeError', stateChangeError);
-      $rootScope.$on('$stateChangeStart', stateChangeStart);
+          .state('main', {
+            url: '/main',
+            abstract: true,
+            templateUrl: 'js/main/templates/menu.html',
+            controller: 'MainController',
+            resolve: {
+              userSettings: ['s2iUserData', function userDataResolve(userData) {
 
-      function ionicPlatformReady() {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if(window.cordova && window.cordova.plugins.Keyboard) {
-          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-        if(window.StatusBar) {
-          // org.apache.cordova.statusbar required
-          StatusBar.styleDefault();
-        }
-      }
+                return userData.settings()
+                  .catch(handleSettingsError);
 
-      function stateChangeError(ev, toState, toParams, fromState, fromParams, error) {
-        if (error.notSetup) {
-          $location.path('/setup');
-        }
+                function handleSettingsError(err) {
+                  var settingsError = new Error('NOT_SETUP');
+                  settingsError.innerError = err;
+                  throw settingsError;
+                }
 
-        console.log('$stateChangeError', arguments);
-      }
-
-      function stateChangeStart(event, toState, toParams, fromState, fromParams) {
-        console.log('$stateChangeStart', arguments);
-      }
-
-    }])
-
-
-    .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
-      
-      $stateProvider
-        
-        .state('main', {
-          url: '/main',
-          abstract: true,
-          templateUrl: 'js/main/templates/menu.html',
-          controller: 'MainController',
-          resolve: {
-            checkSetup: ['$location', '$q', 'stick2itDb', function checkSetup($location, $q, db) {
-              debugger
-              return db.loadSettings();
-            }]
-          }
-        })
-
-        .state('main.profile', {
-          url: '/profile',
-          views: {
-            'menuContent' :{
-              templateUrl: 'js/main/templates/profile.html',
-              controller: 'ProfileController'
+              }]
             }
-          }
-        
-        })
+          })
 
-        .state('setup', {
-          url: '/setup',
-          templateUrl: 'js/main/templates/setup.html',
-          controller: 'SetupController'
-        });
+          .state('main.profile', {
+            url: '/profile',
+            views: {
+              'menuContent' :{
+                templateUrl: 'js/main/templates/profile.html',
+                controller: 'ProfileController'
+              }
+            }
 
-      $urlRouterProvider.otherwise('/main/profile');
+          })
 
-    }]);
+          .state('setup', {
+            url: '/setup',
+            templateUrl: 'js/main/templates/setup.html',
+            controller: 'SetupController'
+          });
+
+        $urlRouterProvider.otherwise('/main/profile');
+      }
+    ]);
 
 })(angular);
+
+/* main/main_run.js */
+(function(angular) {
+
+  angular.module('stick2it')
+    .run([
+      '$ionicPlatform', '$rootScope', '$location', '$state',
+
+      function moduleRun($ionicPlatform, $rootScope, $location, $state) {
+        $ionicPlatform.ready(ionicPlatformReady);
+
+        $rootScope.$on('$stateChangeError', stateChangeError);
+        $rootScope.$on('$stateChangeStart', stateChangeStart);
+
+        $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+          console.log('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
+        });
+        $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
+          console.log('$stateNotFound '+unfoundState.to+'  - fired when a state cannot be found by its name.');
+          console.log(unfoundState, fromState, fromParams);
+        });
+
+
+
+        function ionicPlatformReady() {
+          if(window.cordova && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+          }
+          if(window.StatusBar) {
+            StatusBar.styleDefault();
+          }
+        }
+
+        function stateChangeError(event, toState, toParams, fromState, fromParams, error) {
+          event.preventDefault();
+          if (error.message === 'NOT_SETUP') {
+            console.log('App not setup yet. Redirecting to setup form.');
+            $state.go('setup');
+          }
+        }
+
+        function stateChangeStart(event, toState, toParams, fromState, fromParams) {
+          console.log('$stateChangeStart', arguments);
+        }
+
+      }
+    ]);
+
+})(angular);
+
+/* main/controllers/main_controller.js */
 (function(angular) {
 
   var app = angular.module('stick2it');
@@ -167,96 +129,50 @@
   ]);
 
 })(angular);
+
+/* main/controllers/profile_controller.js */
 (function(angular) {
 
   var app = angular.module('stick2it');
 
   app.controller('ProfileController', [
-    
-    '$scope', '$http', 'Firebase', '$firebase',
-    
-    function ProfileController($scope, $http, Firebase, $firebase) {
-      var 
-        ref = new Firebase('https://stick2it.firebaseio.com/settings/heather4328'),
-        repoLive = $firebase(ref),
-        source = repoLive.$asObject();
 
-      source.$bindTo($scope, 'settings');
-    }
-  ]);
+    '$scope', '$ionicPopup', '$state', 's2iUserData', 'userSettings',
 
-})(angular);
-(function(angular) {
+    function ProfileController($scope, popup, $state, userData, userSettings) {
 
-  var app = angular.module('stick2it');
+      $scope.settings = userSettings;
+      $scope.clearSettings = function clearSettings() {
+        var confirmPopup = popup.confirm({
+           title: 'Clear Settings',
+           template: 'Are you sure you want to clear your settings? This cannot be undone.'
+         });
 
-  app.controller('SetupController', [
-    '$scope', '$window', 'stick2itDb', 
-
-    function SetupController($scope, $window, db) {
-
-      $scope.settings = {
-        name: '',
-        email: '',
-        startDate: undefined
+        confirmPopup.then(function handleConfirmationChoice(res) {
+          if (res) {
+            return userData.saveSettings({})
+              .then(goToSetup);
+          }
+        });
       };
 
-      $scope.saveSettings = function saveSettings() {
-        console.log('storing settings', $scope.settings);
-        db.store('settings', $scope.settings)
-          .then(goToProfile);
-      };
-
-      function goToProfile() {
-        $location.path('/main/profile');
+      function goToSetup() {
+        $state.go('setup');
       }
-
-    }
-
-  ]);
-
-})(angular);
-(function(angular) {
-
-  var app = angular.module('stick2it');
-
-  app.controller('MainController', [
-    '$scope',
-    function MainController($scope) {
-      console.log('main controller');
-      $scope.msg = 'Main Controller message';
     }
   ]);
 
 })(angular);
-(function(angular) {
 
-  var app = angular.module('stick2it');
-
-  app.controller('ProfileController', [
-    
-    '$scope', '$http', 'Firebase', '$firebase',
-    
-    function ProfileController($scope, $http, Firebase, $firebase) {
-      var 
-        ref = new Firebase('https://stick2it.firebaseio.com/settings/heather4328'),
-        repoLive = $firebase(ref),
-        source = repoLive.$asObject();
-
-      source.$bindTo($scope, 'settings');
-    }
-  ]);
-
-})(angular);
+/* main/controllers/setup_controller.js */
 (function(angular) {
 
   var app = angular.module('stick2it');
 
   app.controller('SetupController', [
-    '$scope', '$window', 'stick2itDb', 
+    '$scope', '$state', 's2iUserData', 'stick2itUtils',
 
-    function SetupController($scope, $window, db) {
-
+    function SetupController($scope, $state, userData, s2iUtils) {
       $scope.settings = {
         name: '',
         email: '',
@@ -264,13 +180,13 @@
       };
 
       $scope.saveSettings = function saveSettings() {
-        console.log('storing settings', $scope.settings);
-        db.store('settings', $scope.settings)
+        $scope.settings.id = s2iUtils.makeGuid();
+        userData.saveSettings($scope.settings)
           .then(goToProfile);
       };
 
       function goToProfile() {
-        $location.path('/main/profile');
+        return $state.go('main.profile');
       }
 
     }

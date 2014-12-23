@@ -3,10 +3,9 @@
   var app = angular.module('stick2it');
 
   app.controller('SetupController', [
-    '$scope', '$window', 'stick2itDb', 
+    '$scope', '$state', 's2iUserData', 'stick2itUtils',
 
-    function SetupController($scope, $window, db) {
-
+    function SetupController($scope, $state, userData, s2iUtils) {
       $scope.settings = {
         name: '',
         email: '',
@@ -14,13 +13,13 @@
       };
 
       $scope.saveSettings = function saveSettings() {
-        console.log('storing settings', $scope.settings);
-        db.store('settings', $scope.settings)
+        $scope.settings.id = s2iUtils.makeGuid();
+        userData.saveSettings($scope.settings)
           .then(goToProfile);
       };
 
       function goToProfile() {
-        $location.path('/main/profile');
+        return $state.go('main.profile');
       }
 
     }

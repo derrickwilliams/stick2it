@@ -3,16 +3,29 @@
   var app = angular.module('stick2it');
 
   app.controller('ProfileController', [
-    
-    '$scope', '$http', 'Firebase', '$firebase',
-    
-    function ProfileController($scope, $http, Firebase, $firebase) {
-      var 
-        ref = new Firebase('https://stick2it.firebaseio.com/settings/heather4328'),
-        repoLive = $firebase(ref),
-        source = repoLive.$asObject();
 
-      source.$bindTo($scope, 'settings');
+    '$scope', '$ionicPopup', '$state', 's2iUserData', 'userSettings',
+
+    function ProfileController($scope, popup, $state, userData, userSettings) {
+
+      $scope.settings = userSettings;
+      $scope.clearSettings = function clearSettings() {
+        var confirmPopup = popup.confirm({
+           title: 'Clear Settings',
+           template: 'Are you sure you want to clear your settings? This cannot be undone.'
+         });
+
+        confirmPopup.then(function handleConfirmationChoice(res) {
+          if (res) {
+            return userData.saveSettings({})
+              .then(goToSetup);
+          }
+        });
+      };
+
+      function goToSetup() {
+        $state.go('setup');
+      }
     }
   ]);
 
