@@ -6,13 +6,15 @@
       '$window', 'bluebird', 'stick2itUtils',
 
       function s2iUserDataService($window, Promise, s2iUtils) {
-        var storage = $window.localStorage;
+        var
+          storage = $window.localStorage;
 
         return {
           settings: settings,
           saveSettings: saveSettings,
-          goals: goals,
+          goals: allData,
           saveCategory: saveCategory,
+          getCategory: getCategory,
           saveGoal: saveGoal
         };
 
@@ -27,7 +29,7 @@
             });
         }
 
-        function goals(userId) {
+        function allData(userId) {
           return get(userId, 'data')
             .then(postProcess);
 
@@ -41,12 +43,11 @@
             categoryData = initNewCategory(categoryData);
           }
 
-          return goals(userId)
+          return allData(userId)
             .then(updateCategory)
             .then(saveIt);
 
           function updateCategory(data) {
-            verifyUniqueCategoryId(categoryData.id, data);
             data[categoryData.id] = categoryData;
             return data;
           }
@@ -56,21 +57,32 @@
           }
         }
 
+        function getCategory(userId, categoryId) {
+          return allData(userId)
+            .then(function getCategory(data) {
+              var category = data[categoryId];
+              if (!category) throw new Error('Invalid category. ID not found.');
+              return category;
+            });
+        }
+
         function saveGoal(userId, goalData) {
           var
-            data = goals(userId),
             categoryId = goalData.category;
 
-          goalData.id = goalData.id || s2iUtils.makeGuid();
+          return allData(userId).then(function(data) {
+            goalData.id = goalData.id || s2iUtils.makeGuid();
 
-          if (!categoryId) { // handle uncategorized goals
-            goalData.category = 'NO_CATEGORY';
-            data.NO_CATEGORY = data.NO_CATEGORY || initNoCategory();
-          }
+            if (!categoryId) { // handle uncategorized goals
+              goalData.category = 'NO_CATEGORY';
+              data.NO_CATEGORY = data.NO_CATEGORY || initNoCategory();
+            }
+            data[categoryId].goals[goalData.id] = goalData;
 
-          data[categoryId].goals[goalData.id] = goalData;
+            return saveData(userId, data);
+          });
 
-          return saveData(userId, data);
+
         }
 
         function saveSettings(value) {
@@ -114,10 +126,6 @@
           newCategory.id = s2iUtils.makeGuid();
           newCategory.goals = {};
           return newCategory;
-        }
-
-        function verifyUniqueCategoryId(id, data) {
-          if (data[id]) throw new Error('Duplicate category ID');
         }
 
         function dataEmpty(data) {

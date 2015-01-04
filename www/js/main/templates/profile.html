@@ -1,7 +1,10 @@
 <ion-view title="Profile">
-  <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
+
+  <ion-nav-bar class="bar har-header bar-positive">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-clear button-light icon ion-navicon"></button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
 
   <ion-content class="has-header">
 
@@ -21,12 +24,16 @@
         <span class="input-label">Start Date</span>
         <input type="date" ng-model="settings.startDate">
       </label>
-
-      <div class="padding">
-        <button class="button button-block button-positive activated" ng-click="saveSettings()">Save</button>
-        <button class="button button-block button-assertive activated" ng-click="clearSettings()">Clear Settings</button>
-      </div>
     </div>
 
   </ion-content>
+
+  <ion-footer-bar align-title="center" class="bar-positive">
+    <div class="buttons">
+      <button class="button button-clear button-light icon ion-more" ng-click="toggleProfileOptions($event)"></button>
+    </div>
+    <h1 class="title"></h1>
+
+  </ion-footer-bar>
+
 </ion-view>

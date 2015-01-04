@@ -1,0 +1,26 @@
+<div class="modal">
+  <ion-header-bar class="bar-positive">
+    <h1 class="title">New Category</h1>
+    <div class="buttons">
+      <button class="button button-small button-clear" ng-click="closeNewCategoryModal(true)">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form name="newCategoryForm" ng-submit="addNewCategory(newCategory)" novalidate>
+      <div class="list">
+
+        <div class="list list-inset">
+          <div class="item item-input">
+            <input type="text" placeholder="Category Name" name="categoryName" required ng-model="newCategory.name" />
+          </div>
+
+          <div>
+            <button class="button button-small button-block button-positive" type="submit" ng-disabled="newCategoryForm.$invalid">Add Category</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </ion-content>
+</div>
+

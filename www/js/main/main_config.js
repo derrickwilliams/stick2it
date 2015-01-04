@@ -31,7 +31,7 @@
           .state('main.profile', {
             url: '/profile',
             views: {
-              'menuContent' :{
+              menuContent :{
                 templateUrl: 'js/main/templates/profile.html',
                 controller: 'ProfileController'
               }

@@ -1,0 +1,28 @@
+{
+  "name": "angular-calendar",
+  "homepage": "https://github.com/derrickwilliams/angular-calendar",
+  "authors": [
+    "DerrickW <derrickawilliams@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.8"
+  },
+  "_release": "9d1ce6f530",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "9d1ce6f5309fa1b24a1a811252c8446eb67a3734"
+  },
+  "_source": "git@github.com:derrickwilliams/angular-calendar.git",
+  "_target": "*",
+  "_originalSource": "git@github.com:derrickwilliams/angular-calendar.git",
+  "_direct": true
+}

@@ -1,0 +1,48 @@
+$font-size-main: 1.9em;
+$font-size-day-labels: .5em;
+$font-size-day-cells: .6em;
+
+$mobile-day-header-font-size: 1.75em;
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1200px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 992px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 480px) {
+  .pickadate-centered-heading {
+    .heading-long {
+      display: none;
+    }
+
+    .heading-short {
+      display: inline;
+    }
+  }
+
+  .pickadate-main {
+    font-size: $font-size-main;
+  }
+
+  .pickadate-cell {
+
+    &.pickadate-day-labels {
+      font-size: $font-size-day-labels;
+    }
+
+    &.pickadate-day-cells {
+      font-size: $font-size-day-cells;
+    }
+  }
+}
+

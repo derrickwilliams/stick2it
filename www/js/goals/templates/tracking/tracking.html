@@ -1,0 +1,37 @@
+<ion-view title="Today">
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-clear button-light icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="listItem in goalListItems"
+        ng-class="itemClasses(listItem)"
+        ng-click="itemSelect($event, listItem)"
+        on-hold="itemHold($event, listItem)"
+        class="goal">
+
+        {{listItem.label}}
+
+        <span ng-if="!listItem.isDivider">
+          <weekly-breakdown breakdown="listItem.breakdown" breakdown-select="handleBreakdown(breakdown)" />
+        </span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+  <ion-footer-bar align-title="center" class="bar-positive">
+    <div class="buttons">
+      <button class="button button-clear button-light icon ion-more" ng-click="toggleOptionsPopover($event, 'ON')"></button>
+    </div>
+    <h1 class="title"></h1>
+    <div class="buttons" ng-click="addGoal()">
+      <!--<button class="button button-clear button-light">Add Goal</button>-->
+    </div>
+  </ion-footer-bar>
+</ion-view>
+
+<style>
+
+
+</style>

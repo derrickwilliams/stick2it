@@ -12,49 +12,61 @@
           .state('main.goals', {
             url: '/goals',
             abstract: true,
-            parent: 'main',
             views: {
               menuContent: {
-                template: '<ion-nav-view name="page"></ion-nav-view>'
+                template: '<ion-nav-bar class="bar bar-positive">' +
+                            '<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>' +
+                          '</ion-nav-bar>' +
+                          '<ion-nav-view></ion-nav-view>'
               }
             }
           })
+
           .state('main.goals.categories', {
             url: '/categories',
-            views: {
-              page: {
-                templateUrl: 'js/goals/templates/categories/list.html',
-                controller: 'GoalsCategoriesController'
-              }
-            }
+            templateUrl: 'js/goals/templates/categories/list.html',
+            controller: 'GoalsCategoriesController'
           })
+
           .state('main.goals.categories.new', {
             url: '/categories/new',
             parent: 'main.goals',
-            views: {
-              page: {
-                templateUrl: 'js/goals/templates/categories/form.html',
-                controller: 'EditGoalsCategoryController'
-              }
-            },
-            data: {
-              context: 'NEW'
-            }
+            templateUrl: 'js/goals/templates/categories/form.html',
+            controller: 'EditGoalsCategoryController'
           })
 
           .state('main.goals.categories.edit', {
             url: '/categories/:categoryId/edit',
             parent: 'main.goals',
+            templateUrl: 'js/goals/templates/categories/form.html',
+            controller: 'EditGoalsCategoryController'
+          })
+
+          //.state('main.goals.edit', {
+          //  url: '/goals/:goalId/edit',
+          //  parent: 'main.goals',
+          //  templateUrl: 'js/goals/templates/goals/form.html'
+          //})
+
+          .state('main.tracking', {
+            url: '/tracking',
+            abstract: true,
             views: {
-              page: {
-                templateUrl: 'js/goals/templates/categories/form.html',
-                controller: 'EditGoalsCategoryController'
+              menuContent: {
+                template: '<ion-nav-bar class="bar bar-positive">' +
+                            '<ion-nav-back-button class="button-clear"><i class="icon ion-ios7-arrow-back"></i> Back</ion-nav-back-button>' +
+                          '</ion-nav-bar>' +
+                          '<ion-nav-view></ion-nav-view>'
               }
-            },
-            data: {
-              context: 'EDIT'
             }
+          })
+
+          .state('main.tracking.today', {
+            url: '/today',
+            templateUrl: 'js/goals/templates/tracking/tracking.html',
+            controller: 'TrackingMainController'
           });
+
 
       }]);
 

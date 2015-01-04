@@ -1,1 +1,16 @@
-/* Empty. Add your own CSS if you like */
+.goal-item.item {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+.goal-item .weekly-breakdown {
+  padding: 0px;
+}
+
+.goal.item-divider {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  min-height: 20px;
+  font-weight: 500;
+  font-size: 1em;
+}

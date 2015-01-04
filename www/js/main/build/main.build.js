@@ -7,10 +7,13 @@
     'stick2it.goals',
     'stick2it.services',
     'ngCordova',
-    'firebase'
+    'firebase',
+    'pickadate',
+    'pickadate.templates'
   ]);
 
 })(angular);
+
 
 /* main/main_config.js */
 (function(angular) {
@@ -46,7 +49,7 @@
           .state('main.profile', {
             url: '/profile',
             views: {
-              'menuContent' :{
+              menuContent :{
                 templateUrl: 'js/main/templates/profile.html',
                 controller: 'ProfileController'
               }
@@ -66,6 +69,7 @@
 
 })(angular);
 
+
 /* main/main_run.js */
 (function(angular) {
 
@@ -76,24 +80,13 @@
       function moduleRun($ionicPlatform, $rootScope, $location, $state) {
         $ionicPlatform.ready(ionicPlatformReady);
 
-        $rootScope.$on('$stateChangeError', stateChangeError);
-        $rootScope.$on('$stateChangeStart', stateChangeStart);
-
-        $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
-          console.log('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
-        });
-        $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
-          console.log('$stateNotFound '+unfoundState.to+'  - fired when a state cannot be found by its name.');
-          console.log(unfoundState, fromState, fromParams);
-        });
-
-
+        setupRouteListeners();
 
         function ionicPlatformReady() {
-          if(window.cordova && window.cordova.plugins.Keyboard) {
+          if (window.cordova && window.cordova.plugins.Keyboard) {
             cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
           }
-          if(window.StatusBar) {
+          if (window.StatusBar) {
             StatusBar.styleDefault();
           }
         }
@@ -110,10 +103,23 @@
           console.log('$stateChangeStart', arguments);
         }
 
+        function setupRouteListeners() {
+          $rootScope.$on('$stateChangeError', stateChangeError);
+          $rootScope.$on('$stateChangeStart', stateChangeStart);
+
+          $rootScope.$on('$stateChangeSuccess',function(event, toState, toParams, fromState, fromParams){
+            console.log('$stateChangeSuccess to '+toState.name+'- fired once the state transition is complete.');
+          });
+          $rootScope.$on('$stateNotFound',function(event, unfoundState, fromState, fromParams){
+            console.log('$stateNotFound '+unfoundState.to+'  - fired when a state cannot be found by its name.');
+            console.log(unfoundState, fromState, fromParams);
+          });
+        }
       }
     ]);
 
 })(angular);
+
 
 /* main/controllers/main_controller.js */
 (function(angular) {
@@ -137,16 +143,18 @@
 
   app.controller('ProfileController', [
 
-    '$scope', '$ionicPopup', '$state', 's2iUserData', 'userSettings',
+    '$scope', '$ionicPopup', '$ionicPopover', '$state', 's2iUserData', 'userSettings',
 
-    function ProfileController($scope, popup, $state, userData, userSettings) {
+    function ProfileController($scope, ionPopup, ionPopover, $state, userData, userSettings) {
+
+      setupOptionsMenu();
 
       $scope.settings = userSettings;
-      $scope.clearSettings = function clearSettings() {
-        var confirmPopup = popup.confirm({
+      $scope.clearSettings = function clearSettings(e) {
+        var confirmPopup = ionPopup.confirm({
            title: 'Clear Settings',
            template: 'Are you sure you want to clear your settings? This cannot be undone.'
-         });
+        });
 
         confirmPopup.then(function handleConfirmationChoice(confirmed) {
           if (!confirmed) return;
@@ -156,6 +164,26 @@
         });
       };
 
+      $scope.toggleProfileOptions = function toggleProfileOptions(e) {
+        if ($scope.optionsPopover.isShown()) {
+          $scope.optionsPopover.hide(e);
+        }
+        else {
+          $scope.optionsPopover.show(e);
+        }
+      };
+
+      function setupOptionsMenu() {
+        $scope.optionsPopover = null;
+        ionPopover
+          .fromTemplateUrl('js/main/templates/profile_options.html', {
+            scope: $scope
+          })
+          .then(function optionsPopoverReady(popover) {
+            $scope.optionsPopover = popover;
+          });
+      }
+
       function goToSetup() {
         $state.go('setup');
       }
@@ -163,6 +191,7 @@
   ]);
 
 })(angular);
+
 
 /* main/controllers/setup_controller.js */
 (function(angular) {

@@ -5,7 +5,9 @@
     'stick2it.goals',
     'stick2it.services',
     'ngCordova',
-    'firebase'
+    'firebase',
+    'pickadate',
+    'pickadate.templates'
   ]);
 
 })(angular);

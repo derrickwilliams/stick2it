@@ -1,26 +1,25 @@
-<ion-view title="{{formTitle}}">
+<ion-view title="{{category.name}}">
+  <ion-nav-buttons side="right">
 
-  <ion-nav-title>
-    <h1>Super Duper!</h1>
-  </ion-nav-title>
-
-  <ion-nav-bar class="bar-positive">
-    <ion-nav-back-button>
-    </ion-nav-back-button>
-  </ion-nav-bar>
+  </ion-nav-buttons>
 
   <ion-content class="has-header">
+    <ion-list type="list-inset" class="list-inset" ng-if="listEmpty" class="padding">
+      <ion-item class="text-center"><a href class="button-link" ng-click="addGoal()">Add</a> some goals to this category.</ion-item>
+    </ion-list>
 
-    <div class="list list-inset">
-     <label class="item item-input">
-        <span class="input-label">Name</span>
-        <input type="text" placeholder="Fitness Goals" ng-model="category.name">
-      </label>
-
-      <div class="padding">
-        <button class="button button-block button-positive activated" ng-click="saveCategory(category)">Save</button>
-      </div>
-    </div>
-
+    <ion-list type="list" ng-hide="listEmpty">
+      <ion-item ng-repeat="goal in goals">{{goal.name}}</ion-item>
+    </ion-list>
   </ion-content>
+
+  <ion-footer-bar align-title="center" class="bar-positive">
+    <div class="buttons">
+      <button class="button button-clear button-light icon ion-more" ng-click="toggleOptionsPopover($event, 'ON')"></button>
+    </div>
+    <h1 class="title"></h1>
+    <div class="buttons" ng-click="addGoal()">
+      <button class="button button-clear button-light button-small icon ion-plus"></button>
+    </div>
+  </ion-footer-bar>
 </ion-view>

@@ -1,0 +1,30 @@
+<div class="pickadate">
+  <div class="pickadate-header">
+    <div class="pickadate-controls">
+      <a href="" class="pickadate-prev" ng-click="changeMonth(-1)" ng-show="allowPrevMonth">prev</a>
+      <a href="" class="pickadate-next" ng-click="changeMonth(1)" ng-show="allowNextMonth">next</a>
+    </div>
+    <h3 class="pickadate-centered-heading">
+      <span class="heading-long">{{currentDate | date:"MMMM yyyy"}}</span>
+      <span class="heading-short">{{currentDate | date:"MMM yyyy"}}</span>
+    </h3>
+    <h3 class="pickadate-centered-heading-short"></h3>
+  </div>
+  <div class="pickadate-body">
+    <div class="pickadate-main">
+
+      <ul class="pickadate-cell pickadate-day-labels">
+        <li class="pickadate-head" ng-repeat="dayName in dayNameInitials track by $index">{{dayName}}</li>
+      </ul>
+
+      <ul class="pickadate-cell pickadate-day-cells">
+        <li ng-repeat="d in dates" ng-click="setDate(d)"
+          class="{{d.className}}" ng-class="{'pickadate-active': date == d.date}">
+
+          {{d.date | date:"d"}}
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</div>

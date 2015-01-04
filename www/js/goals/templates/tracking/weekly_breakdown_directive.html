@@ -1,0 +1,9 @@
+<div class="weekly-breakdown row">
+  <div class="col text-center" ng-repeat="breakdown in breakdownData track by $index"
+    ng-class=" { 'current-date-breakdown': isBreakdownToday($index) } "
+    ng-click="onBreakdownSelect($index)"
+    style="justify-content: space-around; color: {{ breakdownColor(breakdown) }};">
+
+    <i class="icon {{ breakdownIcon(breakdown) }}"></i>
+  </div>
+</div>
