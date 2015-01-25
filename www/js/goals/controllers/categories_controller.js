@@ -8,32 +8,41 @@
         function GoalsCategoriesController($scope, $http, userData, userSettings, $state, ionLoading, ionPopover, ionPopup, $timeout) {
           var newCategoryPopup;
 
-          setupPopover();
-          getGoals(userSettings);
+          doSetup();
 
           $scope.listEmpty = true;
           $scope.categories = [];
 
-          $scope.showNewCategoryForm = function showNewCategoryForm() {
+          $scope.showNewCategoryForm = showNewCategoryForm;
+          $scope.addNewCategory = addNewCategory;
+          $scope.goalCount = countGoals;
+          $scope.toggleOptionsPopover = toggleOptionsPopover;
+
+          function doSetup() {
+            setupPopover();
+            getGoals(userSettings);
+          }
+
+          function showNewCategoryForm() {
             setupEmptyCategory();
             showNewCategoryPopup();
-          };
+          }
 
-          $scope.addNewCategory = function addNewCategory(category) {
+          function addNewCategory(category) {
             userData.saveCategory(userSettings.id, category)
-              .then(function handleCategorySave() {
-                return getGoals(userSettings)
-                  .then(function() {
-                    $scope.newCategoryModal.hide();
-                  });
-              });
-          };
+              .then(handleCategorySave);
 
-          $scope.goalCount = function countGoals(category) {
+            function handleCategorySave() {
+              return getGoals(userSettings)
+                .then(hideNewCategoryModal);
+            }
+          }
+
+          function countGoals(category) {
             return Object.keys(category.goals).length;
-          };
+          }
 
-          $scope.toggleOptionsPopover = function toggleOptionsPopover(e, state) {
+          function toggleOptionsPopover(e, state) {
             if (state === 'ON') {
               $scope.optionsPopover.show(e);
             }
@@ -44,19 +53,23 @@
               console.log('Invalid popover state: [' + state + ']');
             }
             return;
-          };
+          }
 
           function setupPopover() {
             ionPopover
               .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
                 scope: $scope
               })
-              .then(function optionsPopoverReady(popover) {
-                $scope.optionsPopover = popover;
-              })
-              .catch(function optionsPopoverError(err) {
-                console.log('options provider error', err);
-              });
+              .then(optionsPopoverReady)
+              .catch(optionsPopoverError);
+
+            function optionsPopoverReady(popover) {
+              $scope.optionsPopover = popover;
+            }
+            
+            function optionsPopoverError(err) {
+              console.log('options provider error', err);
+            }
           }
 
           function getGoals(settings) {
@@ -80,45 +93,16 @@
           }
 
           function showNewCategoryPopup() {
-            newCategoryPopup = ionPopup.show({
-              template: '<form name="newCategoryForm">' +
-              '<input type="text" autofocus name="goalName" ng-model="newCategory.name">' +
-              '</form>',
-              title: 'Name?',
-              scope: $scope,
-
-              buttons: [
-                {
-                  text: 'Cancel',
-                  onTap: function onCancelTap(e) {
-                    return false;
-                  }
-                },
-                {
-                  text: '<b>Save</b>',
-                  type: 'button-positive',
-                  onTap: function onAddTap(e) {
-                    if ($scope.newCategory.name) {
-                      ionLoading.show({
-                        template: 'Adding category...'
-                      });
-
-                      return $scope.newCategory;
-                    }
-                    else {
-                      e.preventDefault();
-                    }
-                  }
-                }
-              ]
-            });
+            newCategoryPopup = ionPopup.show();
 
             newCategoryPopup
               .then(handleNewCategoryPopupResponse)
-              .catch(function newCategoryPopupError(err) {
-                console.log('Something went wrong with the new category popup.', err);
-                ionLoading.hide();
-              });
+              .catch(newCategoryPopupError);
+
+            function newCategoryPopupError(err) {
+              console.log('Something went wrong with the new category popup.', err);
+              ionLoading.hide();
+            }
           }
 
           function handleNewCategoryPopupResponse(response) {
@@ -126,24 +110,75 @@
           }
 
           function saveCategory(category) {
-            $timeout(function finishSave() {
+            $timeout(finishSave, 750);
 
+            function finishSave() {
               return userData.saveCategory(userSettings.id, category)
-                .then(function() {
-                  return getGoals(userSettings)
-                    .then(function() {
-                      ionLoading.hide();
-                    });
-                });
+                .then(handleSaveCategory);
+            }
 
-
-            }, 750);
+            function handleCategorySave() {
+              return getGoals(userSettings)
+                .then(hideLoadingMessage);
+            }
           }
 
           function setupEmptyCategory() {
             $scope.newCategory = {
               name: ''
             };
+          }
+
+          function hideNewCategoryModal() {
+            $scope.newCategoryModal.hide();
+          }
+
+          function hideLoadingMessage() {
+            ionLoading.hide();
+          }
+
+          function newCategoryPopupConfig() {
+            return {
+              template: newCategoryPopupConfigTemplate(),
+              title: 'Name?',
+              scope: $scope,
+              buttons: newCategoryPopupConfigButtons()
+            };
+          }
+
+          function newCategoryPopupConfigTemplate() {
+            return '<form name="newCategoryForm">' +
+              '<input type="text" autofocus name="goalName" ng-model="newCategory.name">' +
+              '</form>';
+          }
+
+          function newCategoryPopupConfigButtons() {
+            return [
+              {
+                text: 'Cancel',
+                onTap: function onCancelTap(e) {
+                  return false;
+                }
+              },
+              {
+                text: '<b>Save</b>',
+                type: 'button-positive',
+                onTap: onAddTap
+              }
+            ];
+
+            function onAddTap(e) {
+              if ($scope.newCategory.name) {
+                ionLoading.show({
+                  template: 'Adding category...'
+                });
+
+                return $scope.newCategory;
+              }
+              else {
+                e.preventDefault();
+              }
+            }
           }
         }
       ]);
