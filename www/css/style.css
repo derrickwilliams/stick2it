@@ -1,7 +1,3 @@
-.goal-item.item {
-  padding-top: 10px;
-  padding-bottom: 5px;
-}
 
 .goal-item .weekly-breakdown {
   padding: 0px;
@@ -14,3 +10,12 @@
   font-weight: 500;
   font-size: 1em;
 }
+
+.goal-item .button.icon:before {
+  padding-top: 75%;
+}
+
+/*
+.item-divider .item-content {
+  padding: 0px;
+}*/

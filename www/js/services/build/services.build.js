@@ -68,6 +68,31 @@
 
 })(angular);
 
+/* services/stick2it/goal_data.js */
+(function(angular) {
+
+  angular.module('stick2it.goals')
+
+    .factory('s2iGoalData', [
+      '$window', 'bluebird', 'stick2itUtils',
+      s2iGoalData
+    ]);
+
+  function s2iGoalData($window, Promise, s2iUtils) {
+    var self;
+
+    self = {
+      tasks: tasks
+    };
+
+    function tasks() {
+
+    }
+  }
+
+})(angular);
+
+
 /* services/stick2it/user_data.js */
 (function(angular) {
 

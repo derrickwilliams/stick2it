@@ -12,13 +12,11 @@
         notifySelect: '&breakdownSelect'
       },
       controller: ['$scope', function weeklyBreakdownController($scope) {
-        console.log('weeklyBreakdownDirective.controller', $scope);
         var selectedBreakdown;
 
         $scope.today = 4;
 
         $scope.onBreakdownSelect = function onBreakdownSelect(breakdownIndex) {
-          console.log('onBreakdownSelect', breakdownIndex);
           $scope.selectedBreakdown = breakdownIndex;
           $scope.notifySelect({ breakdown: breakdownIndex });
         };
@@ -46,7 +44,6 @@
 
       }],
       link: function weeklyBreakdownLink(scope, el, attr) {
-        console.log('weeklyBreakdownDirective.link', scope);
       }
     }
   }

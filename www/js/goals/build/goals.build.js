@@ -386,8 +386,9 @@
     .controller('TrackingMainController', [
       '$scope',
       '$ionicActionSheet',
+      '$ionicListDelegate',
 
-      function TrackingMainController($scope, $ionicActionSheet) {
+      function TrackingMainController($scope, $ionicActionSheet, $ionicListDelegate) {
         $scope.itemClasses = function itemClasses(listItem) {
           return {
             'item-divider': listItem.isDivider,
@@ -396,37 +397,35 @@
           };
         };
 
+        $scope.track = function(item, status) {
+          console.log('tracking', item, status);
+          $ionicListDelegate.closeOptionButtons();
+        };
+
+        $scope.isSwipable = function isSwipable(item) {
+          console.log('isSwipable', item, !item.isDivider);
+          return !item.isDivider;
+        };
+
         $scope.goalListItems = [
-          {
-            label: 'Work',
-            isDivider: true
-          },
-          {
-            label: 'First Item',
-            breakdown: [1, 0, 1, -1, 1, null, null, 1, 0, 1, -1, 1, null, null]
-          },
-          {
-            label: 'Another Item',
-            breakdown: [1, 0, 1, -1, 1, null, null, 1, 0, 1, -1, 1, null, null]
-          },
-          {
-            label: 'Home',
-            isDivider: true
-          },
+          // {
+          //   label: 'Work',
+          //   isDivider: true
+          // },
           {
             label: 'First Item',
             breakdown: [1, 0, 1, -1, 1, null, null, 1, 0, 1, -1, 1, null, null]
           },
           {
             label: 'Another Item',
-            breakdown: [1, 0, 0, -1, 1, null, null]
-          },
-          {
-            label: 'First Item',
             breakdown: [1, 0, 1, -1, 1, null, null, 1, 0, 1, -1, 1, null, null]
           },
+          // {
+          //   label: 'Home',
+          //   isDivider: true
+          // },
           {
-            label: 'Another Item',
+            label: 'Some Other Thing',
             breakdown: [1, 0, 1, -1, 1, null, null, 1, 0, 1, -1, 1, null, null]
           }
         ];
@@ -434,38 +433,6 @@
         $scope.handleBreakdown = function(breakdown) {
           console.log('handling breakdown selected', breakdown);
         };
-
-        $scope.itemSelect = function itemSelect($event, item) {
-          if (item.isDivider) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            return;
-          }
-          console.log('itemSelected', item);
-        };
-
-        $scope.itemHold = function itemHold($event, item) {
-          var hideSheet = $ionicActionSheet.show({
-            buttons: [
-              {
-                text: 'Track Today: Done',
-                somethingElse: 'something'
-              },
-              { text: 'Track Today: Skip' }
-            ],
-            //destructiveText: 'Delete',
-            //titleText: 'Modify your album',
-            cancelText: 'Cancel',
-            cancel: function() {
-              console.log('action sheet cancel', arguments);
-            },
-            buttonClicked: function(index) {
-              console.log('action sheet buttonClicked', arguments);
-              return false;
-            }
-          });
-        };
-
       }
 
     ]);
@@ -513,13 +480,11 @@
         notifySelect: '&breakdownSelect'
       },
       controller: ['$scope', function weeklyBreakdownController($scope) {
-        console.log('weeklyBreakdownDirective.controller', $scope);
         var selectedBreakdown;
 
         $scope.today = 4;
 
         $scope.onBreakdownSelect = function onBreakdownSelect(breakdownIndex) {
-          console.log('onBreakdownSelect', breakdownIndex);
           $scope.selectedBreakdown = breakdownIndex;
           $scope.notifySelect({ breakdown: breakdownIndex });
         };
@@ -547,7 +512,6 @@
 
       }],
       link: function weeklyBreakdownLink(scope, el, attr) {
-        console.log('weeklyBreakdownDirective.link', scope);
       }
     }
   }

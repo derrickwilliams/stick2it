@@ -21,7 +21,7 @@
 
           $scope.addNewCategory = function addNewCategory(category) {
             userData.saveCategory(userSettings.id, category)
-              .then(function() {
+              .then(function handleCategorySave() {
                 return getGoals(userSettings)
                   .then(function() {
                     $scope.newCategoryModal.hide();
@@ -54,8 +54,8 @@
               .then(function optionsPopoverReady(popover) {
                 $scope.optionsPopover = popover;
               })
-              .catch(function() {
-                debugger
+              .catch(function optionsPopoverError(err) {
+                console.log('options provider error', err);
               });
           }
 
@@ -115,7 +115,7 @@
 
             newCategoryPopup
               .then(handleNewCategoryPopupResponse)
-              .catch(function(err) {
+              .catch(function newCategoryPopupError(err) {
                 console.log('Something went wrong with the new category popup.', err);
                 ionLoading.hide();
               });
