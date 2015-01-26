@@ -10,11 +10,15 @@
         ng-class="itemClasses(listItem)"
         class="goal">
 
-        {{listItem.label}}
+        <div class="row">
+          <div class="col-25">{{listItem.label}}</div>
 
-        <span ng-if="!listItem.isDivider">
-          <weekly-breakdown breakdown="listItem.breakdown" breakdown-select="handleBreakdown(breakdown)" />
-        </span>
+          <div class="col-75">
+            <span ng-if="!listItem.isDivider">
+              <weekly-breakdown breakdown="listItem.breakdown" breakdown-select="handleBreakdown(breakdown)" />
+            </span>
+          </div>
+        </div>
 
         <ion-option-button ng-if="!listItem.isDivider" class="button-balanced icon ion-checkmark" ng-click="track(listItem, true)"></ion-option-button>
         <ion-option-button ng-if="!listItem.isDivider" class="button-info icon ion-minus" ng-click="track(listItem, null)"></ion-option-button>
@@ -32,12 +36,15 @@
         <ion-option-button ng-if="!listItem.isDivider" class="button-info icon ion-minus" ng-click="track(listItem, null)"></ion-option-button>
         <ion-option-button ng-if="!listItem.isDivider" class="button-assertive icon ion-close" ng-click="track(listItem, false)"></ion-option-button>
 
-        {{listItem.label}}
-
-        <span ng-if="!listItem.isDivider">
-          <weekly-breakdown breakdown="listItem.breakdown" breakdown-select="handleBreakdown(breakdown)" />
-        </span>
-
+        <div class="row">
+          <div class="col-25">{{listItem.label}}</div>
+          <div class="col-75">
+            <span ng-if="!listItem.isDivider">
+              <weekly-breakdown breakdown="listItem.breakdown" breakdown-select="handleBreakdown(breakdown)" />
+            </span>
+          </div>
+        </div>
+        
       </ion-item>
     </ion-list>
   </ion-content>

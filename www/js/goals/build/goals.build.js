@@ -81,60 +81,70 @@
     angular.module('stick2it.goals')
 
       .controller('GoalsCategoriesController',[
-        '$scope', '$http', 's2iUserData', 'userSettings', '$state', '$ionicLoading', '$ionicPopover', '$ionicPopup', '$timeout',
+        '$scope', '$http', 's2iUserData', 'userSettings', '$state',
+        '$ionicLoading', '$ionicPopup', '$timeout',
+        'categoryFormOptionsPopoverInitializer',
 
-        function GoalsCategoriesController($scope, $http, userData, userSettings, $state, ionLoading, ionPopover, ionPopup, $timeout) {
+        function GoalsCategoriesController($scope, $http, userData, userSettings, $state,
+          ionLoading, ionPopup, $timeout, formOptionsInitializer) {
+
           var newCategoryPopup;
 
-          setupPopover();
-          getGoals(userSettings);
+          doSetup();
 
           $scope.listEmpty = true;
           $scope.categories = [];
 
-          $scope.showNewCategoryForm = function showNewCategoryForm() {
+          $scope.showNewCategoryForm = showNewCategoryForm;
+          $scope.addNewCategory = addNewCategory;
+          $scope.goalCount = countGoals;
+          $scope.toggleOptionsPopover = toggleOptionsPopover;
+
+          function doSetup() {
+            setupPopover();
+            getGoals(userSettings);
+          }
+
+          function showNewCategoryForm() {
             setupEmptyCategory();
             showNewCategoryPopup();
-          };
+          }
 
-          $scope.addNewCategory = function addNewCategory(category) {
+          function addNewCategory(category) {
             userData.saveCategory(userSettings.id, category)
-              .then(function() {
-                return getGoals(userSettings)
-                  .then(function() {
-                    $scope.newCategoryModal.hide();
-                  });
-              });
-          };
+              .then(handleCategorySave);
 
-          $scope.goalCount = function countGoals(category) {
+            function handleCategorySave() {
+              return getGoals(userSettings)
+                .then(hideNewCategoryModal);
+            }
+          }
+
+          function countGoals(category) {
             return Object.keys(category.goals).length;
-          };
+          }
 
-          $scope.toggleOptionsPopover = function toggleOptionsPopover(e, state) {
-            if (state === 'ON') {
-              $scope.optionsPopover.show(e);
-            }
-            else if (state === 'OFF') {
-              $scope.optionsPopover.hide(e);
-            }
-            else {
-              console.log('Invalid popover state: [' + state + ']');
-            }
-            return;
-          };
+          function toggleOptionsPopover(e, state) {
+            return $scope.formOptions.toggle(e);
+          }
 
           function setupPopover() {
-            ionPopover
-              .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
-                scope: $scope
-              })
-              .then(function optionsPopoverReady(popover) {
-                $scope.optionsPopover = popover;
-              })
-              .catch(function() {
-                debugger
-              });
+            var setupOptions = {
+              scope: $scope
+            };
+
+            formOptionsInitializer.init(setupOptions)
+              .then(storePopoverInstance)
+              .catch(handleOptionsPopoverError);
+
+            function storePopoverInstance(popover) {
+              $scope.formOptions = popover;
+            }
+
+            function handleOptionsPopoverError(err) {
+              console.log('options provider error', err);
+              throw err;
+            }
           }
 
           function getGoals(settings) {
@@ -145,12 +155,14 @@
 
           function handleGoalData(goals) {
             var list = [];
-            angular.forEach(goals, function pushToList(data, key) {
-              list.push(data);
-            });
+            angular.forEach(goals, pushToList);
 
             $scope.listEmpty = list.length === 0 ? true : false;
             $scope.categories = list;
+
+            function pushToList(data, key) {
+              list.push(data);
+            }
           }
 
           function handleGoalsError(err) {
@@ -158,45 +170,16 @@
           }
 
           function showNewCategoryPopup() {
-            newCategoryPopup = ionPopup.show({
-              template: '<form name="newCategoryForm">' +
-              '<input type="text" autofocus name="goalName" ng-model="newCategory.name">' +
-              '</form>',
-              title: 'Name?',
-              scope: $scope,
-
-              buttons: [
-                {
-                  text: 'Cancel',
-                  onTap: function onCancelTap(e) {
-                    return false;
-                  }
-                },
-                {
-                  text: '<b>Save</b>',
-                  type: 'button-positive',
-                  onTap: function onAddTap(e) {
-                    if ($scope.newCategory.name) {
-                      ionLoading.show({
-                        template: 'Adding category...'
-                      });
-
-                      return $scope.newCategory;
-                    }
-                    else {
-                      e.preventDefault();
-                    }
-                  }
-                }
-              ]
-            });
+            newCategoryPopup = ionPopup.show(newCategoryPopupConfig());
 
             newCategoryPopup
               .then(handleNewCategoryPopupResponse)
-              .catch(function(err) {
-                console.log('Something went wrong with the new category popup.', err);
-                ionLoading.hide();
-              });
+              .catch(newCategoryPopupError);
+
+            function newCategoryPopupError(err) {
+              console.log('Something went wrong with the new category popup.', err);
+              ionLoading.hide();
+            }
           }
 
           function handleNewCategoryPopupResponse(response) {
@@ -204,24 +187,75 @@
           }
 
           function saveCategory(category) {
-            $timeout(function finishSave() {
+            $timeout(finishSave, 750);
 
+            function finishSave() {
               return userData.saveCategory(userSettings.id, category)
-                .then(function() {
-                  return getGoals(userSettings)
-                    .then(function() {
-                      ionLoading.hide();
-                    });
-                });
+                .then(handleCategorySave);
+            }
 
-
-            }, 750);
+            function handleCategorySave() {
+              return getGoals(userSettings)
+                .then(hideLoadingMessage);
+            }
           }
 
           function setupEmptyCategory() {
             $scope.newCategory = {
               name: ''
             };
+          }
+
+          function hideNewCategoryModal() {
+            $scope.newCategoryModal.hide();
+          }
+
+          function hideLoadingMessage() {
+            ionLoading.hide();
+          }
+
+          function newCategoryPopupConfig() {
+            return {
+              template: newCategoryPopupConfigTemplate(),
+              title: 'Name?',
+              scope: $scope,
+              buttons: newCategoryPopupConfigButtons()
+            };
+          }
+
+          function newCategoryPopupConfigTemplate() {
+            return '<form name="newCategoryForm">' +
+              '<input type="text" autofocus name="goalName" ng-model="newCategory.name">' +
+              '</form>';
+          }
+
+          function newCategoryPopupConfigButtons() {
+            return [
+              {
+                text: 'Cancel',
+                onTap: function onCancelTap(e) {
+                  return false;
+                }
+              },
+              {
+                text: '<b>Save</b>',
+                type: 'button-positive',
+                onTap: onAddTap
+              }
+            ];
+
+            function onAddTap(e) {
+              if ($scope.newCategory.name) {
+                ionLoading.show({
+                  template: 'Adding category...'
+                });
+
+                return $scope.newCategory;
+              }
+              else {
+                e.preventDefault();
+              }
+            }
           }
         }
       ]);
@@ -513,6 +547,85 @@
       }],
       link: function weeklyBreakdownLink(scope, el, attr) {
       }
+    }
+  }
+
+})(angular);
+
+
+/* goals/services/category_form_options.js */
+(function(angular) {
+
+  angular.module('stick2it.goals')
+    .service('categoryFormOptionsPopoverInitializer', [
+      '$q',
+      '$ionicPopover',
+      'categoryFormOptionsPopover',
+      CategoryFormOptionsPopoverInitializer
+    ])
+    .service('categoryFormOptionsPopover', [
+      CategoryFormOptionsPopover
+    ]);
+
+  function CategoryFormOptionsPopoverInitializer($q, $ionicPopover, formOptions) {
+    var self = {};
+
+    self.init = init;
+
+    return self;
+
+    function init(params) {
+      var deferred = $q.defer();
+
+      $ionicPopover
+        .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
+          scope: params.scope
+        })
+        .then(function returnPopoverInstance(popover) {
+          return deferred.resolve(formOptions.create(popover));
+        })
+        .catch(newCategoryPopoverError);
+
+      return deferred.promise;
+
+      function newCategoryPopoverError(err) {
+        console.log('options provider error', err);
+        throw err;
+      }
+    }
+  }
+
+  function CategoryFormOptionsPopover() {
+    var self = {};
+
+    self.create = createPopover;
+
+    return self;
+
+    function createPopover(ionicPopoverInstance) {
+      return CategoryFormOptionsPopoverConstructor(ionicPopoverInstance);
+    }
+  }
+
+  function CategoryFormOptionsPopoverConstructor(ionicPopoverInstance)  {
+    var self = {}, popover = ionicPopoverInstance;
+
+    self.toggle = toggle;
+    self.show = show;
+    self.hide = hide;
+
+    return self;
+
+    function toggle(e) {
+      return popover.isShown() ? hide() : show(e);
+    }
+
+    function show(e) {
+      return popover.show(e);
+    }
+
+    function hide() {
+      return popover.hide();
     }
   }
 

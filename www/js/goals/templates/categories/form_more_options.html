@@ -18,9 +18,14 @@
   </ion-content>
 
   <!--<ion-content>-->
-    <!--<div class="list" ng-click="toggleOptionsPopover($event, 'OFF')">-->
-      <!--<a class="item" href>View for Today</a>-->
-      <!--<a class="item" href>Edit</a>-->
+    <div class="list" ng-click="toggleOptionsPopover($event, 'OFF')">
+      <button class="item button button-block button-clear button-positive"
+        ng-click="">Journal</button>
+
+      <button class="item button button-block button-clear button-positive"
+        ng-click="showNewCategoryForm()">Add List</button>
+
+      <!--<a class="item" href>Edit</a>
 
       <!--<a class="item" href>Another Option</a>-->
       <!--<a class="item" href>So Many Options!</a>-->
@@ -36,7 +41,7 @@
       <!--&lt;!&ndash;<a class="item" href="https://github.com/driftyco/ionic" target="_blank">&ndash;&gt;-->
         <!--&lt;!&ndash;Github Repo&ndash;&gt;-->
       <!--&lt;!&ndash;</a>&ndash;&gt;-->
-    <!--</div>-->
+    </div>
 
 
 

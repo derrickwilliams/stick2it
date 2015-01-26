@@ -3,9 +3,13 @@
     angular.module('stick2it.goals')
 
       .controller('GoalsCategoriesController',[
-        '$scope', '$http', 's2iUserData', 'userSettings', '$state', '$ionicLoading', '$ionicPopover', '$ionicPopup', '$timeout',
+        '$scope', '$http', 's2iUserData', 'userSettings', '$state',
+        '$ionicLoading', '$ionicPopup', '$timeout',
+        'categoryFormOptionsPopoverInitializer',
 
-        function GoalsCategoriesController($scope, $http, userData, userSettings, $state, ionLoading, ionPopover, ionPopup, $timeout) {
+        function GoalsCategoriesController($scope, $http, userData, userSettings, $state,
+          ionLoading, ionPopup, $timeout, formOptionsInitializer) {
+
           var newCategoryPopup;
 
           doSetup();
@@ -43,32 +47,25 @@
           }
 
           function toggleOptionsPopover(e, state) {
-            if (state === 'ON') {
-              $scope.optionsPopover.show(e);
-            }
-            else if (state === 'OFF') {
-              $scope.optionsPopover.hide(e);
-            }
-            else {
-              console.log('Invalid popover state: [' + state + ']');
-            }
-            return;
+            return $scope.formOptions.toggle(e);
           }
 
           function setupPopover() {
-            ionPopover
-              .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
-                scope: $scope
-              })
-              .then(optionsPopoverReady)
-              .catch(optionsPopoverError);
+            var setupOptions = {
+              scope: $scope
+            };
 
-            function optionsPopoverReady(popover) {
-              $scope.optionsPopover = popover;
+            formOptionsInitializer.init(setupOptions)
+              .then(storePopoverInstance)
+              .catch(handleOptionsPopoverError);
+
+            function storePopoverInstance(popover) {
+              $scope.formOptions = popover;
             }
-            
-            function optionsPopoverError(err) {
+
+            function handleOptionsPopoverError(err) {
               console.log('options provider error', err);
+              throw err;
             }
           }
 
@@ -80,12 +77,14 @@
 
           function handleGoalData(goals) {
             var list = [];
-            angular.forEach(goals, function pushToList(data, key) {
-              list.push(data);
-            });
+            angular.forEach(goals, pushToList);
 
             $scope.listEmpty = list.length === 0 ? true : false;
             $scope.categories = list;
+
+            function pushToList(data, key) {
+              list.push(data);
+            }
           }
 
           function handleGoalsError(err) {
@@ -93,7 +92,7 @@
           }
 
           function showNewCategoryPopup() {
-            newCategoryPopup = ionPopup.show();
+            newCategoryPopup = ionPopup.show(newCategoryPopupConfig());
 
             newCategoryPopup
               .then(handleNewCategoryPopupResponse)
@@ -114,7 +113,7 @@
 
             function finishSave() {
               return userData.saveCategory(userSettings.id, category)
-                .then(handleSaveCategory);
+                .then(handleCategorySave);
             }
 
             function handleCategorySave() {
