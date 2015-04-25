@@ -15,7 +15,7 @@
         ng-repeat="category in categories track by category.id"
         ui-sref="main.goals.categories.edit({ categoryId: category.id })">
         {{category.name}}
-        <span class="badge badge-stable">{{goalCount(category)}}</span>        
+        <span class="badge badge-stable">{{goalCount(category)}}</span>
       </ion-item>
     </ion-list>
 
@@ -24,8 +24,11 @@
   <ion-footer-bar align-title="center" class="bar-positive">
     <div class="buttons">
 
-    <h1 class="title"></h1>
-      <button class="button button-clear button-light icon ion-more" ng-click="toggleOptionsPopover($event, 'ON')"></button>
+      <h1 class="title"></h1>
+
+      <button class="button button-clear button-light icon ion-more"
+        ng-click="toggleOptionsPopover($event, 'ON')">
+      </button>
     </div>
   </ion-footer-bar>
 </ion-view>

@@ -1,0 +1,31 @@
+<ion-view title="Goal Details" hide-back-button="true">
+
+  <ion-nav-buttons side="left">
+      <!--<button menu-toggle="left" class="button button-clear button-light icon ion-navicon"></button>-->
+  </ion-nav-buttons>
+
+  <ion-content class="has-header">
+
+    <ion-list type="list">
+      <label class="item item-input">
+        <span class="input-label">Start Date</span>
+        <input type="date" ng-model="settings.startDate">
+      </label>
+      <ion-toggle ng-model="isMultipart" toggle-class="toggle-positive">Multipart Goal</ion-toggle>
+    </ion-list>
+
+    blah
+
+  </ion-content>
+
+  <ion-footer-bar align-title="center" class="bar-positive">
+    <div class="buttons">
+
+      <h1 class="title"></h1>
+
+      <button class="button button-clear button-light icon ion-more"
+        ng-click="toggleOptionsPopover($event, 'ON')">
+      </button>
+    </div>
+  </ion-footer-bar>
+</ion-view>

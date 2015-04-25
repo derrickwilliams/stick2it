@@ -17,22 +17,27 @@
   function EditGoalsCategoryController($scope, $timeout, $state, $stateParams,
     s2iUtils, userData, userSettings, ionPopup, ionPopover, ionLoading) {
 
-    var
-      categoryId = $stateParams.categoryId,
-      isEditing = angular.isDefined(categoryId),
-      categoryGoals = [],
-      listEmpty = false;
+    var categoryId = $stateParams.categoryId,
+        isEditing = angular.isDefined(categoryId),
+        categoryGoals = [],
+        listEmpty = false;
 
     setupPopover();
     loadData();
 
-    $scope.addGoal = function addGoal() {
+    $scope.addGoal = addGoal;
+    $scope.saveCategory = saveCategory;
+    $scope.toggleOptionsPopover = toggleOptionsPopover;
+
+    function addGoal() {
 
       $scope.goal = { name: '' };
 
       var goalNamePopup = ionPopup.show({
         template: '<form name="newGoalForm">' +
                     '<input type="text" autofocus name="goalName" ng-model="goal.name">' +
+                    '<input type="checkbox" name="multipartGoal" ng-model="goal.isMultipart" />' +
+                      '<label for="multipartGoal">mulipart goal</label>' +
                   '</form>',
         title: 'What is your goal?',
         scope: $scope,
@@ -69,10 +74,9 @@
           console.log('Something went wrong with the new goal popup.');
         });
 
-    };
-    $scope.saveCategory = saveCategory;
+    }
 
-    $scope.toggleOptionsPopover = function toggleOptionsPopover(e, state) {
+    function toggleOptionsPopover(e, state) {
       if (state === 'ON') {
         $scope.optionsPopover.show(e);
       }
@@ -83,11 +87,11 @@
         console.log('Invalid popover state: [' + state + ']');
       }
       return;
-    };
+    }
 
     function setupPopover() {
       ionPopover
-        .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
+        .fromTemplateUrl('js/goals/templates/categories/category_details_options.html', {
           scope: $scope
         })
         .then(function optionsPopoverReady(popover) {

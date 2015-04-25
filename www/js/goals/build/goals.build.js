@@ -30,12 +30,12 @@
             controller: 'GoalsCategoriesController'
           })
 
-          .state('main.goals.categories.new', {
-            url: '/categories/new',
-            parent: 'main.goals',
-            templateUrl: 'js/goals/templates/categories/form.html',
-            controller: 'EditGoalsCategoryController'
-          })
+          // .state('main.goals.categories.new', {
+          //   url: '/categories/new',
+          //   parent: 'main.goals',
+          //   templateUrl: 'js/goals/templates/categories/form.html',
+          //   controller: 'EditGoalsCategoryController'
+          // })
 
           .state('main.goals.categories.edit', {
             url: '/categories/:categoryId/edit',
@@ -44,11 +44,11 @@
             controller: 'EditGoalsCategoryController'
           })
 
-          //.state('main.goals.edit', {
-          //  url: '/goals/:goalId/edit',
-          //  parent: 'main.goals',
-          //  templateUrl: 'js/goals/templates/goals/form.html'
-          //})
+          .state('main.goals.items', {
+            url: '^/categories/items/:goalId/edit',
+            templateUrl: 'js/goals/templates/goals/items.html',
+            controller: 'ItemsController'
+          })
 
           .state('main.tracking', {
             url: '/tracking',
@@ -67,6 +67,12 @@
             url: '/today',
             templateUrl: 'js/goals/templates/tracking/tracking.html',
             controller: 'TrackingMainController'
+          })
+
+          .state('main.tracking.journal', {
+            url: '/journal',
+            templateUrl: 'js/goals/templates/tracking/journal.html',
+            controller: 'TrackingJournalController'
           });
 
 
@@ -216,8 +222,8 @@
 
           function newCategoryPopupConfig() {
             return {
+              title: 'Category Name',
               template: newCategoryPopupConfigTemplate(),
-              title: 'Name?',
               scope: $scope,
               buttons: newCategoryPopupConfigButtons()
             };
@@ -285,22 +291,27 @@
   function EditGoalsCategoryController($scope, $timeout, $state, $stateParams,
     s2iUtils, userData, userSettings, ionPopup, ionPopover, ionLoading) {
 
-    var
-      categoryId = $stateParams.categoryId,
-      isEditing = angular.isDefined(categoryId),
-      categoryGoals = [],
-      listEmpty = false;
+    var categoryId = $stateParams.categoryId,
+        isEditing = angular.isDefined(categoryId),
+        categoryGoals = [],
+        listEmpty = false;
 
     setupPopover();
     loadData();
 
-    $scope.addGoal = function addGoal() {
+    $scope.addGoal = addGoal;
+    $scope.saveCategory = saveCategory;
+    $scope.toggleOptionsPopover = toggleOptionsPopover;
+
+    function addGoal() {
 
       $scope.goal = { name: '' };
 
       var goalNamePopup = ionPopup.show({
         template: '<form name="newGoalForm">' +
                     '<input type="text" autofocus name="goalName" ng-model="goal.name">' +
+                    '<input type="checkbox" name="multipartGoal" ng-model="goal.isMultipart" />' +
+                      '<label for="multipartGoal">mulipart goal</label>' +
                   '</form>',
         title: 'What is your goal?',
         scope: $scope,
@@ -337,10 +348,9 @@
           console.log('Something went wrong with the new goal popup.');
         });
 
-    };
-    $scope.saveCategory = saveCategory;
+    }
 
-    $scope.toggleOptionsPopover = function toggleOptionsPopover(e, state) {
+    function toggleOptionsPopover(e, state) {
       if (state === 'ON') {
         $scope.optionsPopover.show(e);
       }
@@ -351,11 +361,11 @@
         console.log('Invalid popover state: [' + state + ']');
       }
       return;
-    };
+    }
 
     function setupPopover() {
       ionPopover
-        .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
+        .fromTemplateUrl('js/goals/templates/categories/category_details_options.html', {
           scope: $scope
         })
         .then(function optionsPopoverReady(popover) {
@@ -408,6 +418,26 @@
       $state.go('main.goals.categories');
     }
   }
+
+})(angular);
+
+
+/* goals/controllers/items_controller.js */
+(function(angular) {
+  'use strict';
+
+  angular.module('stick2it.goals')
+    .controller('ItemsController', [
+      '$scope',
+      '$stateParams',
+
+      ItemsController
+    ]);
+
+  function ItemsController($scope, $stateParams) {
+    
+  }
+
 
 })(angular);
 
@@ -499,6 +529,25 @@
 })(angular);
 
 
+/* goals/controllers/tracking_journal_controller.js */
+(function(angular) {
+  'use strict';
+
+  angular.module('stick2it.goals')
+    .controller('TrackingJournalController', [
+      '$scope',
+      '$ionicActionSheet',
+      '$ionicListDelegate',
+
+      function TrackingJournalController($scope, $ionicActionSheet, $ionicListDelegate) {
+
+      }
+
+    ]);
+
+})(angular);
+
+
 /* goals/directives/weekly_breakdown.js */
 (function(angular) {
 
@@ -578,7 +627,7 @@
       var deferred = $q.defer();
 
       $ionicPopover
-        .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
+        .fromTemplateUrl('js/goals/templates/categories/category_list_options.html', {
           scope: params.scope
         })
         .then(function returnPopoverInstance(popover) {

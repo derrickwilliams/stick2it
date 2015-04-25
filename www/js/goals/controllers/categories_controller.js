@@ -138,8 +138,8 @@
 
           function newCategoryPopupConfig() {
             return {
+              title: 'Category Name',
               template: newCategoryPopupConfigTemplate(),
-              title: 'Name?',
               scope: $scope,
               buttons: newCategoryPopupConfigButtons()
             };

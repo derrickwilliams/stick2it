@@ -28,12 +28,12 @@
             controller: 'GoalsCategoriesController'
           })
 
-          .state('main.goals.categories.new', {
-            url: '/categories/new',
-            parent: 'main.goals',
-            templateUrl: 'js/goals/templates/categories/form.html',
-            controller: 'EditGoalsCategoryController'
-          })
+          // .state('main.goals.categories.new', {
+          //   url: '/categories/new',
+          //   parent: 'main.goals',
+          //   templateUrl: 'js/goals/templates/categories/form.html',
+          //   controller: 'EditGoalsCategoryController'
+          // })
 
           .state('main.goals.categories.edit', {
             url: '/categories/:categoryId/edit',
@@ -42,11 +42,11 @@
             controller: 'EditGoalsCategoryController'
           })
 
-          //.state('main.goals.edit', {
-          //  url: '/goals/:goalId/edit',
-          //  parent: 'main.goals',
-          //  templateUrl: 'js/goals/templates/goals/form.html'
-          //})
+          .state('main.goals.items', {
+            url: '^/categories/items/:goalId/edit',
+            templateUrl: 'js/goals/templates/goals/items.html',
+            controller: 'ItemsController'
+          })
 
           .state('main.tracking', {
             url: '/tracking',
@@ -65,6 +65,12 @@
             url: '/today',
             templateUrl: 'js/goals/templates/tracking/tracking.html',
             controller: 'TrackingMainController'
+          })
+
+          .state('main.tracking.journal', {
+            url: '/journal',
+            templateUrl: 'js/goals/templates/tracking/journal.html',
+            controller: 'TrackingJournalController'
           });
 
 

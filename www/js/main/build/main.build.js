@@ -129,12 +129,12 @@
   app.controller('MainController', [
     '$scope',
     function MainController($scope) {
-      console.log('main controller');
       $scope.msg = 'Main Controller message';
     }
   ]);
 
 })(angular);
+
 
 /* main/controllers/profile_controller.js */
 (function(angular) {

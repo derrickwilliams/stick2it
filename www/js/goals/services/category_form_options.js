@@ -22,7 +22,7 @@
       var deferred = $q.defer();
 
       $ionicPopover
-        .fromTemplateUrl('js/goals/templates/categories/form_more_options.html', {
+        .fromTemplateUrl('js/goals/templates/categories/category_list_options.html', {
           scope: params.scope
         })
         .then(function returnPopoverInstance(popover) {
